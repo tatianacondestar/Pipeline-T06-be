@@ -1,0 +1,294 @@
+// =====================================================
+// 1. CREAR Y USAR BASE DE DATOS
+// =====================================================
+use ("TurismoLunahuana")
+
+
+// =====================================================
+// 2. CREAR COLECCIONES
+// =====================================================
+
+db.createCollection("activities")
+db.createCollection("customers")
+db.createCollection("guides")
+db.createCollection("equipment")
+db.createCollection("transports")
+db.createCollection("activity_schedules")
+db.createCollection("bookings")
+db.createCollection("users")
+db.createCollection("hotels")
+
+
+// =====================================================
+// 3. INSERTAR ACTIVIDADES
+// =====================================================
+db.activities.insertMany([
+{
+  name: "Canotaje",
+  description: { nivel: "intermedio" },
+  duration_hours: 2,
+  max_quota: 15,
+  price: 150,
+  location: "Lunahuaná",
+  difficulty: 3,
+  activity_date: new Date("2023-11-01"),
+  state: true,
+  created_at: new Date()
+},
+{
+  name: "SipLine",
+  description: { nivel: "intermedio" },
+  duration_hours: 2,
+  max_quota: 18,
+  price: 140,
+  location: "Lunahuaná",
+  difficulty: 3,
+  activity_date: new Date("2023-11-07"),
+  state: true,
+  created_at: new Date()
+},
+{
+  name: "Cuatrimoto",
+  description: { nivel: "intermedio" },
+  duration_hours: 3,
+  max_quota: 12,
+  price: 160,
+  location: "Lunahuaná",
+  difficulty: 4,
+  activity_date: new Date("2023-11-09"),
+  state: true,
+  created_at: new Date()
+}
+])
+
+
+// =====================================================
+// 4. INSERTAR CLIENTES
+// =====================================================
+db.customers.insertMany([
+{
+  name: "Carlos",
+  last_name: "Pérez",
+  birth_date: new Date("1990-05-10"),
+  doc_type: "DNI",
+  doc_number: "12345678",
+  email: "carlos.perez@mail.com",
+  phone_number: "987654321",
+  state: true,
+  created_at: new Date()
+},
+{
+  name: "María",
+  last_name: "Lopez",
+  birth_date: new Date("1985-11-20"),
+  doc_type: "DNI",
+  doc_number: "87654321",
+  email: "maria.lopez@mail.com",
+  phone_number: "912345678",
+  state: true,
+  created_at: new Date()
+}
+])
+
+
+// =====================================================
+// 5. INSERTAR GUÍAS
+// =====================================================
+db.guides.insertMany([
+{
+  name: "Ana",
+  last_name: "Castillo",
+  license: "LIC123",
+  hire_date: new Date("2021-03-01"),
+  hourly_rate: 50,
+  specialty: "Ciclismo",
+  certifications: { cursos: ["primeros auxilios"] },
+  state: true
+},
+{
+  name: "José",
+  last_name: "Ramírez",
+  license: "LIC124",
+  hire_date: new Date("2020-07-15"),
+  hourly_rate: 45,
+  specialty: "Canotaje",
+  certifications: { cursos: ["rescate acuático"] },
+  state: true
+}
+])
+
+
+// =====================================================
+// 6. INSERTAR EQUIPOS
+// =====================================================
+db.equipment.insertMany([
+{
+  name: "Casco",
+  description: "Protección",
+  size: "M",
+  quantity_total: 50,
+  quantity_available: 30,
+  purchase_date: new Date("2023-01-01"),
+  state: true
+},
+{
+  name: "Chaleco salvavidas",
+  description: "Seguridad",
+  size: "L",
+  quantity_total: 40,
+  quantity_available: 25,
+  purchase_date: new Date("2023-01-01"),
+  state: true
+}
+])
+
+// =====================================================
+// 6.1 INSERTAR TRANSPORTES
+// =====================================================
+db.transports.insertMany([
+{
+  type: "Van turística",
+  plate: "ABC-123",
+  capacity: 12,
+  model_year: 2020,
+  fuel_type: "D",
+  driver_name: "Luis Mendoza",
+  state: true
+},
+{
+  type: "Bus mediano",
+  plate: "XYZ-987",
+  capacity: 25,
+  model_year: 2019,
+  fuel_type: "G",
+  driver_name: "Pedro Salazar",
+  state: true
+}
+])
+
+
+// =====================================================
+// 7. INSERTAR HORARIOS
+// =====================================================
+db.activity_schedules.insertMany([
+{
+  activity_name: "Canotaje",
+  guide: { name: "José Ramírez" },
+  start_date_time: new Date("2023-11-01T09:00:00"),
+  end_date_time: new Date("2023-11-01T11:00:00"),
+  state: true
+},
+{
+  activity_name: "SIPLINE",
+  guide: { name: "Ana Castillo" },
+  start_date_time: new Date("2023-11-03T08:30:00"),
+  end_date_time: new Date("2023-11-03T10:30:00"),
+  state: true
+}
+])
+
+
+// =====================================================
+// 8. INSERTAR USUARIO
+// =====================================================
+db.users.insertOne({
+  full_name: "Administrador Principal",
+  email: "admin@mail.com",
+  password_hash: "$2b$10$7QJ9qY5qFh8eN4W5yA7hA.z1zQxA7wT3F1Xh4m5B2v8nK0dP3rL6S",
+  role: "ADMIN",
+  created_at: new Date()
+})
+
+
+// =====================================================
+// 9. INSERTAR HOTELES
+// =====================================================
+db.hotels.insertMany([
+{
+  name: "Hotel Valle Encantado",
+  rooms: 20,
+  location: "Centro",
+  stars: 4,
+  phone: "987654321",
+  state: true
+},
+{
+  name: "Hotel Andino Real",
+  rooms: 35,
+  location: "Centro",
+  stars: 3,
+  phone: "987111000",
+  state: true
+}
+])
+
+
+// =====================================================
+// 10. INSERTAR RESERVAS (DOCUMENTO COMPLETO)
+// =====================================================
+db.bookings.insertMany([
+{
+  customer: {
+    name: "Carlos Pérez",
+    email: "carlos.perez@mail.com"
+  },
+  booking_date: new Date("2023-11-02"),
+  total_pay: 300,
+  state: true,
+
+  details: [
+    {
+      activity_name: "Canotaje",
+      personnel_quantity: 2,
+      sub_total: 300,
+      discount: 0,
+      state_detail: "P",
+      equipment: [
+        {
+          name: "Casco",
+          quantity: 2,
+          returned: false
+        }
+      ]
+    }
+  ],
+
+  payments: [
+    {
+      amount: 300,
+      payment_method: "Efectivo",
+      currency: "PEN",
+      pay_date: new Date()
+    }
+  ]
+},
+{
+  customer: {
+    name: "María Lopez",
+    email: "maria.lopez@mail.com"
+  },
+  booking_date: new Date("2023-11-04"),
+  total_pay: 350,
+  state: true,
+
+  details: [
+    {
+      activity_name: "SipLine",
+      personnel_quantity: 3,
+      sub_total: 375,
+      discount: 25,
+      state_detail: "P",
+      equipment: []
+    }
+  ],
+
+  payments: [
+    {
+      amount: 350,
+      payment_method: "Tarjeta",
+      currency: "PEN",
+      pay_date: new Date()
+    }
+  ]
+}
+])

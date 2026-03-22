@@ -20,12 +20,19 @@ db.createCollection("hotels")
 
 
 // =====================================================
-// 3. INSERTAR ACTIVIDADES
+// ACTIVITIES CORREGIDO
 // =====================================================
+
+use("TurismoLunahuana")
+
+// 🔥 BORRAR colección para evitar errores
+db.activities.drop()
+
+// 🔥 INSERTAR DATOS CORRECTOS
 db.activities.insertMany([
 {
   name: "Canotaje",
-  description: { nivel: "intermedio" },
+  description: "Nivel intermedio",
   duration_hours: 2,
   max_quota: 15,
   price: 150,
@@ -37,7 +44,7 @@ db.activities.insertMany([
 },
 {
   name: "SipLine",
-  description: { nivel: "intermedio" },
+  description: "Nivel intermedio",
   duration_hours: 2,
   max_quota: 18,
   price: 140,
@@ -49,7 +56,7 @@ db.activities.insertMany([
 },
 {
   name: "Cuatrimoto",
-  description: { nivel: "intermedio" },
+  description: "Nivel intermedio",
   duration_hours: 3,
   max_quota: 12,
   price: 160,

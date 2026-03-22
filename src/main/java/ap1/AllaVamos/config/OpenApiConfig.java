@@ -42,7 +42,7 @@ public class OpenApiConfig {
      * Configuración general de OpenAPI (Swagger).
      */
     @Bean
-    public OpenAPI apiInfo(@Value("${app.base-url:http://localhost:${server.port:8081}}") String serverUrl) {
+    public OpenAPI apiInfo(@Value("${app.base-url:http://localhost:${server.port:8080}}") String serverUrl) {
         return new OpenAPI()
                 .addServersItem(new Server().url(serverUrl))
                 .info(new Info()

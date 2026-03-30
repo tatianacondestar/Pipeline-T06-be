@@ -6,7 +6,7 @@ import reactor.core.publisher.Mono;
 
 public interface ActivityService {
 
-    // 🔥 LISTAR TODOS (ACTIVOS + INACTIVOS)
+    // 🔥 LISTAR SOLO ACTIVOS (consistente con ServiceImpl)
     Flux<ActivityModel> findAll();
 
     // 🔍 Buscar por ID
@@ -24,6 +24,6 @@ public interface ActivityService {
     // ❌ Eliminado lógico (auditoría: deletedAt)
     Mono<ActivityModel> deleteLogical(String id);
 
-    // ♻️ Restaurar (auditoría: limpiar deletedAt)
+    // ♻️ Restaurar (auditoría: restoredAt)
     Mono<ActivityModel> restoreLogical(String id);
 }

@@ -18,7 +18,7 @@ public class ActivityServiceImpl implements ActivityService {
 
     private final ActivityRepository repository;
 
-    // 🔥 FECHA AUTOMÁTICA CON ZONA HORARIA PERÚ
+    // 🔥 FECHA AUTOMÁTICA PERÚ
     private Date now() {
         return Date.from(
                 LocalDateTime.now()
@@ -27,10 +27,10 @@ public class ActivityServiceImpl implements ActivityService {
         );
     }
 
-    // ✅ LISTAR TODOS (ACTIVOS + ELIMINADOS)
+    // ✅ LISTAR TODOS (ACTIVOS + INACTIVOS)
     @Override
     public Flux<ActivityModel> findAll() {
-        return repository.findAll(); // 🔥 IMPORTANTE: no filtrar
+        return repository.findAll();
     }
 
     // ✅ BUSCAR POR ID
@@ -57,10 +57,10 @@ public class ActivityServiceImpl implements ActivityService {
 
         Date now = now();
 
-        // 🔥 AUDITORÍA
         activity.setCreatedAt(now);
         activity.setUpdatedAt(null);
         activity.setDeletedAt(null);
+        activity.setRestoredAt(null); // 🔥 IMPORTANTE
 
         return repository.save(activity);
     }
@@ -83,14 +83,13 @@ public class ActivityServiceImpl implements ActivityService {
                         existing.setActivityDate(activity.getActivityDate());
                     }
 
-                    // 🔥 AUDITORÍA
                     existing.setUpdatedAt(now());
 
                     return repository.save(existing);
                 });
     }
 
-    // ✅ ELIMINADO LÓGICO (NO BORRA, SOLO CAMBIA ESTADO)
+    // ✅ ELIMINADO LÓGICO (NO BORRA)
     @Override
     public Mono<ActivityModel> deleteLogical(String id) {
         return repository.findById(id)
@@ -98,14 +97,16 @@ public class ActivityServiceImpl implements ActivityService {
 
                     activity.setState(false);
 
-                    // 🔥 AUDITORÍA
-                    activity.setDeletedAt(now());
+                    // 🔥 SOLO SE SETEA UNA VEZ
+                    if (activity.getDeletedAt() == null) {
+                        activity.setDeletedAt(now());
+                    }
 
                     return repository.save(activity);
                 });
     }
 
-    // ✅ RESTAURAR
+    // ✅ RESTAURAR (🔥 NO BORRA deletedAt)
     @Override
     public Mono<ActivityModel> restoreLogical(String id) {
         return repository.findById(id)
@@ -113,8 +114,11 @@ public class ActivityServiceImpl implements ActivityService {
 
                     activity.setState(true);
 
-                    // 🔥 LIMPIAR ELIMINACIÓN
-                    activity.setDeletedAt(null);
+                    // 🔥 NO TOCAR deletedAt ❌
+                    // 🔥 NUEVO CAMPO
+                    activity.setRestoredAt(now());
+
+                    activity.setUpdatedAt(now());
 
                     return repository.save(activity);
                 });

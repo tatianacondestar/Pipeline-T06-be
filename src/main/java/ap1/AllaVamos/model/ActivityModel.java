@@ -43,7 +43,9 @@ public class ActivityModel {
     @Builder.Default
     private Boolean state = true;
 
-    // 🔥 AUDITORÍA
+    // ===============================
+    // 🔥 AUDITORÍA COMPLETA
+    // ===============================
 
     @Field("created_at")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "America/Lima")
@@ -56,4 +58,22 @@ public class ActivityModel {
     @Field("deleted_at")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "America/Lima")
     private Date deletedAt;
+
+    // 🔥 RESTAURACIÓN (IMPORTANTE)
+    @Field("restored_at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "America/Lima")
+    private Date restoredAt;
+
+    // 🔥 MÉTODOS AUTOMÁTICOS (opcional pero PRO 🔥)
+    public void markDeleted(Date date) {
+        this.state = false;
+        if (this.deletedAt == null) {
+            this.deletedAt = date;
+        }
+    }
+
+    public void markRestored(Date date) {
+        this.state = true;
+        this.restoredAt = date;
+    }
 }

@@ -1,13 +1,12 @@
 // =====================================================
 // 1. CREAR Y USAR BASE DE DATOS
 // =====================================================
-use ("TurismoLunahuana")
+use("TurismoLunahuana")
 
 
 // =====================================================
 // 2. CREAR COLECCIONES
 // =====================================================
-
 db.createCollection("activities")
 db.createCollection("customers")
 db.createCollection("guides")
@@ -20,15 +19,13 @@ db.createCollection("hotels")
 
 
 // =====================================================
-// ACTIVITIES CORREGIDO
+// 3. ACTIVITIES (🔥 AUDITORÍA COMPLETA)
 // =====================================================
 
-use("TurismoLunahuana")
-
-// 🔥 BORRAR colección para evitar errores
+// 🔥 BORRAR colección (solo pruebas)
 db.activities.drop()
 
-// 🔥 INSERTAR DATOS CORRECTOS
+// 🔥 INSERTAR DATOS CON AUDITORÍA
 db.activities.insertMany([
 {
   name: "Canotaje",
@@ -39,8 +36,13 @@ db.activities.insertMany([
   location: "Lunahuaná",
   difficulty: 3,
   activity_date: new Date("2023-11-01"),
+
   state: true,
-  created_at: new Date()
+
+  // 🔥 AUDITORÍA
+  created_at: new Date(),
+  updated_at: null,
+  deleted_at: null
 },
 {
   name: "SipLine",
@@ -51,8 +53,13 @@ db.activities.insertMany([
   location: "Lunahuaná",
   difficulty: 3,
   activity_date: new Date("2023-11-07"),
+
   state: true,
-  created_at: new Date()
+
+  // 🔥 AUDITORÍA
+  created_at: new Date(),
+  updated_at: null,
+  deleted_at: null
 },
 {
   name: "Cuatrimoto",
@@ -63,8 +70,13 @@ db.activities.insertMany([
   location: "Lunahuaná",
   difficulty: 4,
   activity_date: new Date("2023-11-09"),
+
   state: true,
-  created_at: new Date()
+
+  // 🔥 AUDITORÍA
+  created_at: new Date(),
+  updated_at: null,
+  deleted_at: null
 }
 ])
 
@@ -149,6 +161,7 @@ db.equipment.insertMany([
 }
 ])
 
+
 // =====================================================
 // 6.1 INSERTAR TRANSPORTES
 // =====================================================
@@ -231,7 +244,7 @@ db.hotels.insertMany([
 
 
 // =====================================================
-// 10. INSERTAR RESERVAS (DOCUMENTO COMPLETO)
+// 10. INSERTAR RESERVAS
 // =====================================================
 db.bookings.insertMany([
 {
@@ -242,7 +255,6 @@ db.bookings.insertMany([
   booking_date: new Date("2023-11-02"),
   total_pay: 300,
   state: true,
-
   details: [
     {
       activity_name: "Canotaje",
@@ -259,40 +271,10 @@ db.bookings.insertMany([
       ]
     }
   ],
-
   payments: [
     {
       amount: 300,
       payment_method: "Efectivo",
-      currency: "PEN",
-      pay_date: new Date()
-    }
-  ]
-},
-{
-  customer: {
-    name: "María Lopez",
-    email: "maria.lopez@mail.com"
-  },
-  booking_date: new Date("2023-11-04"),
-  total_pay: 350,
-  state: true,
-
-  details: [
-    {
-      activity_name: "SipLine",
-      personnel_quantity: 3,
-      sub_total: 375,
-      discount: 25,
-      state_detail: "P",
-      equipment: []
-    }
-  ],
-
-  payments: [
-    {
-      amount: 350,
-      payment_method: "Tarjeta",
       currency: "PEN",
       pay_date: new Date()
     }

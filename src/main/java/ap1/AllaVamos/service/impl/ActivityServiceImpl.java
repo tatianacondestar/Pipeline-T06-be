@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 @Service
@@ -16,10 +18,19 @@ public class ActivityServiceImpl implements ActivityService {
 
     private final ActivityRepository repository;
 
-    // ✅ LISTAR TODO
+    // 🔥 FECHA AUTOMÁTICA CON ZONA HORARIA PERÚ
+    private Date now() {
+        return Date.from(
+                LocalDateTime.now()
+                        .atZone(ZoneId.of("America/Lima"))
+                        .toInstant()
+        );
+    }
+
+    // ✅ LISTAR TODOS (ACTIVOS + ELIMINADOS)
     @Override
     public Flux<ActivityModel> findAll() {
-        return repository.findAll();
+        return repository.findAll(); // 🔥 IMPORTANTE: no filtrar
     }
 
     // ✅ BUSCAR POR ID
@@ -34,23 +45,22 @@ public class ActivityServiceImpl implements ActivityService {
         return repository.findByState(state);
     }
 
-    // ✅ CREAR (🔥 CORREGIDO)
+    // ✅ CREAR
     @Override
     public Mono<ActivityModel> save(ActivityModel activity) {
 
-        // 🔥 asegurar que sea nuevo
         activity.setId(null);
 
-        // 🔥 estado por defecto
         if (activity.getState() == null) {
             activity.setState(true);
         }
 
-        // 🔥 solo createdAt automático
-        activity.setCreatedAt(new Date());
+        Date now = now();
 
-        // ❌ NO forzar activityDate (evita error 500)
-        // se usará solo si viene en el JSON
+        // 🔥 AUDITORÍA
+        activity.setCreatedAt(now);
+        activity.setUpdatedAt(null);
+        activity.setDeletedAt(null);
 
         return repository.save(activity);
     }
@@ -73,29 +83,40 @@ public class ActivityServiceImpl implements ActivityService {
                         existing.setActivityDate(activity.getActivityDate());
                     }
 
+                    // 🔥 AUDITORÍA
+                    existing.setUpdatedAt(now());
+
                     return repository.save(existing);
                 });
     }
 
-    // ✅ ELIMINADO LÓGICO
+    // ✅ ELIMINADO LÓGICO (NO BORRA, SOLO CAMBIA ESTADO)
     @Override
-    public Mono<Void> deleteLogical(String id) {
+    public Mono<ActivityModel> deleteLogical(String id) {
         return repository.findById(id)
                 .flatMap(activity -> {
+
                     activity.setState(false);
+
+                    // 🔥 AUDITORÍA
+                    activity.setDeletedAt(now());
+
                     return repository.save(activity);
-                })
-                .then();
+                });
     }
 
     // ✅ RESTAURAR
     @Override
-    public Mono<Void> restoreLogical(String id) {
+    public Mono<ActivityModel> restoreLogical(String id) {
         return repository.findById(id)
                 .flatMap(activity -> {
+
                     activity.setState(true);
+
+                    // 🔥 LIMPIAR ELIMINACIÓN
+                    activity.setDeletedAt(null);
+
                     return repository.save(activity);
-                })
-                .then();
+                });
     }
 }

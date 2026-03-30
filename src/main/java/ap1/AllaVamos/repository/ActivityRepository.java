@@ -8,12 +8,12 @@ import reactor.core.publisher.Flux;
 @Repository
 public interface ActivityRepository extends ReactiveMongoRepository<ActivityModel, String> {
 
-    //  Filtrar por estado (activo/inactivo)
+    // ✅ Filtrar por estado (ACTIVO / INACTIVO)
     Flux<ActivityModel> findByState(Boolean state);
 
-    //  OPCIONAL (útil para futuro)
+    // 🔍 Buscar por nombre
     Flux<ActivityModel> findByNameContainingIgnoreCase(String name);
 
-    //  OPCIONAL (por ubicación)
+    // 📍 Buscar por ubicación
     Flux<ActivityModel> findByLocation(String location);
 }

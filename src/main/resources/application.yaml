@@ -2,3 +2,7 @@ spring:
   data:
     mongodb:
       uri: mongodb+srv://tatianaconde_db_user:UFK9elYQNEIkEtqo@cluster0.t9araxv.mongodb.net/TurismoLunahuana?retryWrites=true&w=majority
+
+  jackson:
+    time-zone: America/Lima
+    date-format: yyyy-MM-dd HH:mm:ss

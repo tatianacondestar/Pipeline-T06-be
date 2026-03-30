@@ -6,24 +6,24 @@ import reactor.core.publisher.Mono;
 
 public interface ActivityService {
 
-    // ✅ Listar todas las actividades
+    // 🔥 LISTAR TODOS (ACTIVOS + INACTIVOS)
     Flux<ActivityModel> findAll();
 
-    // ✅ Buscar por ID
+    // 🔍 Buscar por ID
     Mono<ActivityModel> findById(String id);
 
-    // ✅ Filtrar por estado (activo/inactivo)
+    // 🔍 Filtrar por estado (true / false)
     Flux<ActivityModel> findByState(Boolean state);
 
-    // ✅ Crear actividad
+    // ✅ Crear actividad (auditoría: createdAt)
     Mono<ActivityModel> save(ActivityModel activity);
 
-    // ✅ Actualizar actividad
+    // 🔄 Actualizar actividad (auditoría: updatedAt)
     Mono<ActivityModel> update(String id, ActivityModel activity);
 
-    // ✅ Eliminado lógico (state = false)
-    Mono<Void> deleteLogical(String id);
+    // ❌ Eliminado lógico (auditoría: deletedAt)
+    Mono<ActivityModel> deleteLogical(String id);
 
-    // ✅ Restaurar (state = true)
-    Mono<Void> restoreLogical(String id);
+    // ♻️ Restaurar (auditoría: limpiar deletedAt)
+    Mono<ActivityModel> restoreLogical(String id);
 }

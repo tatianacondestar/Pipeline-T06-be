@@ -21,14 +21,14 @@ public class ActivityRest {
 
     private final ActivityService service;
 
-    // ✅ LISTAR TODO
-    @Operation(summary = "Listar todas las actividades")
+    // ✅ LISTAR SOLO ACTIVOS 🔥
+    @Operation(summary = "Listar actividades activas")
     @GetMapping
     public Flux<ActivityModel> getAll() {
         return service.findAll();
     }
 
-    // ✅ LISTAR POR ID
+    // ✅ BUSCAR POR ID
     @Operation(summary = "Buscar actividad por ID")
     @GetMapping("/{id}")
     public Mono<ActivityModel> getById(
@@ -37,7 +37,7 @@ public class ActivityRest {
         return service.findById(id);
     }
 
-    // ✅ LISTAR POR ESTADO
+    // ✅ FILTRAR POR ESTADO
     @Operation(summary = "Filtrar por estado")
     @GetMapping("/state/{state}")
     public Flux<ActivityModel> getByState(
@@ -46,14 +46,14 @@ public class ActivityRest {
         return service.findByState(state);
     }
 
-    // ✅ CREAR (🔥 CORREGIDO)
+    // ✅ CREAR (auditoría: createdAt)
     @Operation(summary = "Crear actividad")
     @PostMapping
     public Mono<ActivityModel> create(@RequestBody ActivityModel activity) {
         return service.save(activity);
     }
 
-    // ✅ ACTUALIZAR
+    // ✅ ACTUALIZAR (auditoría: updatedAt)
     @Operation(summary = "Actualizar actividad")
     @PutMapping("/{id}")
     public Mono<ActivityModel> update(
@@ -65,19 +65,19 @@ public class ActivityRest {
         return service.update(id, activity);
     }
 
-    // ✅ ELIMINADO LÓGICO
-    @Operation(summary = "Eliminar lógico")
+    // ✅ ELIMINADO LÓGICO (🔥 ahora devuelve objeto)
+    @Operation(summary = "Eliminar lógico (guarda deletedAt)")
     @PatchMapping("/delete/{id}")
-    public Mono<Void> delete(
+    public Mono<ActivityModel> delete(
             @Parameter(description = "ID de la actividad")
             @PathVariable String id) {
         return service.deleteLogical(id);
     }
 
-    // ✅ RESTAURAR
+    // ✅ RESTAURAR (🔥 limpia deletedAt)
     @Operation(summary = "Restaurar actividad")
     @PatchMapping("/restore/{id}")
-    public Mono<Void> restore(
+    public Mono<ActivityModel> restore(
             @Parameter(description = "ID de la actividad")
             @PathVariable String id) {
         return service.restoreLogical(id);

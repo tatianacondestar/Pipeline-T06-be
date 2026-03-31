@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 import org.springframework.stereotype.Service;
+
 import ap1.AllaVamos.model.CustomerModel;
 import ap1.AllaVamos.repository.CustomerRepository;
 import ap1.AllaVamos.service.CustomerService;
@@ -24,6 +25,9 @@ public class CustomerServiceImpl implements CustomerService {
         return LocalDateTime.now(ZoneId.of("America/Lima"));
     }
 
+    // =========================
+    // LISTAR
+    // =========================
     @Override
     public Flux<CustomerModel> findAll() {
         return customerRepository.findAll();
@@ -35,8 +39,15 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public Flux<CustomerModel> findByState(Boolean state) {
+        return customerRepository.findByState(state);
+    }
+
+    // =========================
+    // CREAR
+    // =========================
+    @Override
     public Mono<CustomerModel> save(CustomerModel customer) {
-        // Activo por defecto y timestamps iniciales (soft-delete)
         customer.setState(true);
         customer.setCreatedAt(now());
         customer.setUpdatedAt(null);
@@ -45,10 +56,25 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.save(customer);
     }
 
+    // =========================
+    // ACTUALIZAR
+    // =========================
     @Override
     public Mono<CustomerModel> update(String id, CustomerModel customer) {
         return customerRepository.findById(id)
                 .flatMap(c -> {
+                    LocalDateTime originalDeletedAt = c.getDeletedAt();
+                    LocalDateTime originalRestoredAt = c.getRestoredAt();
+
+                    boolean onlyStateChange = customer.getState() != null
+                            && customer.getName() == null
+                            && customer.getLastName() == null
+                            && customer.getBirthDate() == null
+                            && customer.getDocType() == null
+                            && customer.getDocNumber() == null
+                            && customer.getEmail() == null
+                            && customer.getPhoneNumber() == null;
+
                     c.setName(customer.getName());
                     c.setLastName(customer.getLastName());
                     c.setBirthDate(customer.getBirthDate());
@@ -59,56 +85,78 @@ public class CustomerServiceImpl implements CustomerService {
 
                     Boolean prevState = c.getState();
                     if (customer.getState() != null) {
-                        c.setState(customer.getState());
-                        if (Boolean.TRUE.equals(customer.getState()) && (prevState == null || !prevState)) {
-                            c.setRestoredAt(now());
-                            c.setDeletedAt(null);
-                        }
-                        if (Boolean.FALSE.equals(customer.getState()) && (prevState == null || prevState)) {
-                            c.setDeletedAt(now());
-                            c.setRestoredAt(null);
-                        }
+                        Boolean newState = customer.getState();
+                        c.setState(newState);
+                        applyAuditDates(c, prevState, newState);
                     }
 
-                    c.setUpdatedAt(now());
+                    if (c.getDeletedAt() == null && originalDeletedAt != null) {
+                        c.setDeletedAt(originalDeletedAt);
+                    }
+                    if (c.getRestoredAt() == null && originalRestoredAt != null) {
+                        c.setRestoredAt(originalRestoredAt);
+                    }
+
+                    // updatedAt solo cambia cuando se actualizan datos (no por activar/desactivar)
+                    if (!onlyStateChange) {
+                        c.setUpdatedAt(now());
+                    }
+
                     return customerRepository.save(c);
                 });
     }
 
+    // =========================
+    // ELIMINAR (SOFT DELETE)
+    // =========================
     @Override
     public Mono<Void> deleteById(String id) {
-        // Mantiene el comportamiento de "eliminar lógico": si no existe, simplemente completamos.
         return customerRepository.findById(id)
                 .flatMap(c -> {
+                    LocalDateTime originalRestoredAt = c.getRestoredAt();
+
+                    Boolean prevState = c.getState();
                     c.setState(false);
-                    c.setDeletedAt(now());
-                    c.setRestoredAt(null);
+                    applyAuditDates(c, prevState, false);
+                    if (c.getRestoredAt() == null && originalRestoredAt != null) {
+                        c.setRestoredAt(originalRestoredAt);
+                    }
                     return customerRepository.save(c);
                 })
                 .then();
     }
 
-    @Override
-    public Flux<CustomerModel> findByState(Boolean state) {
-        return customerRepository.findByState(state);
-    }
-
+    // =========================
+    // CAMBIAR ESTADO (ACTIVAR / DESACTIVAR)
+    // =========================
     @Override
     public Mono<CustomerModel> updateState(String id, Boolean newState) {
         return customerRepository.findById(id)
                 .flatMap(c -> {
-                    Boolean prev = c.getState();
+                    LocalDateTime originalDeletedAt = c.getDeletedAt();
+                    LocalDateTime originalRestoredAt = c.getRestoredAt();
+
+                    Boolean prevState = c.getState();
                     c.setState(newState);
-                    c.setUpdatedAt(now());
-                    if (Boolean.TRUE.equals(newState) && (prev == null || !prev)) {
-                        c.setRestoredAt(now());
-                        c.setDeletedAt(null);
+                    applyAuditDates(c, prevState, newState);
+
+                    if (c.getDeletedAt() == null && originalDeletedAt != null) {
+                        c.setDeletedAt(originalDeletedAt);
                     }
-                    if (Boolean.FALSE.equals(newState) && (prev == null || prev)) {
-                        c.setDeletedAt(now());
-                        c.setRestoredAt(null);
+                    if (c.getRestoredAt() == null && originalRestoredAt != null) {
+                        c.setRestoredAt(originalRestoredAt);
                     }
+
                     return customerRepository.save(c);
                 });
+    }
+
+    private void applyAuditDates(CustomerModel customer, Boolean prevState, Boolean newState) {
+        if (Boolean.FALSE.equals(newState)) {
+            customer.setDeletedAt(now());
+        }
+        if (Boolean.TRUE.equals(newState)) {
+            customer.setRestoredAt(now());
+        }
     }
 }

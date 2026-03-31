@@ -60,12 +60,12 @@ public class ActivityServiceImpl implements ActivityService {
         activity.setCreatedAt(now);
         activity.setUpdatedAt(null);
         activity.setDeletedAt(null);
-        activity.setRestoredAt(null); // 🔥 IMPORTANTE
+        activity.setRestoredAt(null);
 
         return repository.save(activity);
     }
 
-    // ✅ ACTUALIZAR
+    // ✅ ACTUALIZAR (SOLO AQUÍ se usa updatedAt)
     @Override
     public Mono<ActivityModel> update(String id, ActivityModel activity) {
         return repository.findById(id)
@@ -83,13 +83,14 @@ public class ActivityServiceImpl implements ActivityService {
                         existing.setActivityDate(activity.getActivityDate());
                     }
 
+                    // 🔥 SOLO AQUÍ se actualiza
                     existing.setUpdatedAt(now());
 
                     return repository.save(existing);
                 });
     }
 
-    // ✅ ELIMINADO LÓGICO (NO BORRA)
+    // ✅ ELIMINADO LÓGICO (NO TOCA updatedAt)
     @Override
     public Mono<ActivityModel> deleteLogical(String id) {
         return repository.findById(id)
@@ -97,7 +98,6 @@ public class ActivityServiceImpl implements ActivityService {
 
                     activity.setState(false);
 
-                    // 🔥 SOLO SE SETEA UNA VEZ
                     if (activity.getDeletedAt() == null) {
                         activity.setDeletedAt(now());
                     }
@@ -106,7 +106,7 @@ public class ActivityServiceImpl implements ActivityService {
                 });
     }
 
-    // ✅ RESTAURAR (🔥 NO BORRA deletedAt)
+    // ✅ RESTAURAR (NO TOCA updatedAt)
     @Override
     public Mono<ActivityModel> restoreLogical(String id) {
         return repository.findById(id)
@@ -114,11 +114,11 @@ public class ActivityServiceImpl implements ActivityService {
 
                     activity.setState(true);
 
-                    // 🔥 NO TOCAR deletedAt ❌
-                    // 🔥 NUEVO CAMPO
+                    // 🔥 NO borrar deletedAt
+                    // 🔥 SOLO registrar restauración
                     activity.setRestoredAt(now());
 
-                    activity.setUpdatedAt(now());
+                    // ❌ NO actualizar updatedAt aquí
 
                     return repository.save(activity);
                 });

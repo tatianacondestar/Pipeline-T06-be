@@ -1,0 +1,23 @@
+# kubectl apply -f tatiana-conde-04-deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tatiana-conde-04-deployment
+  namespace: tatiana-conde-04-namespace
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: tatiana-conde-04-deployment        # Debe coincidir con las etiquetas del Service
+  template:
+    metadata:
+      labels:
+        app: tatiana-conde-04-deployment      # Debe coincidir con las etiquetas del Service
+    spec:
+      containers:
+      - name: tatiana-conde-04-container
+        image: 261a/tatiana-webflux-nosql:1.0   # Reemplaza con tu imagen Docker Hub
+        imagePullPolicy: IfNotPresent        # Evitar traer siempre la última versión si hay una actual
+        #envFrom:
+        #- secretRef:
+        #    name: tatiana-conde04-secret  # Esto cargará todos los valores como variables de entorno

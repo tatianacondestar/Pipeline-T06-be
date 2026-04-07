@@ -1,0 +1,14 @@
+# kubectl apply -f fabrizio-negron-14-service.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: fabrizio-negron-14-service
+  namespace: fabrizio-negron-14-namespace
+spec:
+  type: NodePort      #30000-32767  # Cambia a LoadBalancer si estás en un entorno de nube
+  ports:
+  - port: 30001       # Puerto que el Service expondrá
+    targetPort: 8081  # Puerto en el contenedor donde tu aplicación escucha
+    nodePort: 30001   # Puerto asignado en el nodo, opcional
+  selector:
+    app: fabrizio-negron-14-deployment  # Debe coincidir con las etiquetas del Deployment

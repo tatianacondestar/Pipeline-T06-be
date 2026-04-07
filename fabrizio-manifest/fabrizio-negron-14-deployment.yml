@@ -1,0 +1,23 @@
+# kubectl apply -f fabrizio-negron-14-deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fabrizio-negron-14-deployment
+  namespace: fabrizio-negron-14-namespace
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: fabrizio-negron-14-deployment        # Debe coincidir con las etiquetas del Service
+  template:
+    metadata:
+      labels:
+        app: fabrizio-negron-14-deployment      # Debe coincidir con las etiquetas del Service
+    spec:
+      containers:
+      - name: fabrizio-negron-14-container
+        image: fabrizionegron/fabrizio-webflux-nosql:1.0   # Reemplaza con tu imagen Docker Hub
+        imagePullPolicy: IfNotPresent        # Evitar traer siempre la última versión si hay una actual
+        #envFrom:
+        #- secretRef:
+        #    name: juan-condori-00-secret  # Esto cargará todos los valores como variables de entorno

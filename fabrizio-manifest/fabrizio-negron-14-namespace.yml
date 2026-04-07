@@ -1,0 +1,6 @@
+# kubectl create namespace fabrizio-negron-14-namespace (COMANDO)
+# kubectl apply -f fabrizo-negron-14-namespace.yml (yml)
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fabrizio-negron-14-namespace

@@ -106,7 +106,41 @@ db.customers.insertMany([
   phone_number: "912345678",
   state: true,
   created_at: new Date()
+},
+{
+  name: "Luis",
+  last_name: "Torres",
+  birth_date: new Date("1995-02-15"),
+  doc_type: "DNI",
+  doc_number: "44556677",
+  email: "luis.torres@mail.com",
+  phone_number: "999888777",
+  state: true,
+  created_at: new Date()
+},
+{
+  name: "Andrea",
+  last_name: "Gómez",
+  birth_date: new Date("1992-08-22"),
+  doc_type: "DNI",
+  doc_number: "11223344",
+  email: "andrea.gomez@mail.com",
+  phone_number: "988777666",
+  state: true,
+  created_at: new Date()
+},
+{
+  name: "Jorge",
+  last_name: "Rojas",
+  birth_date: new Date("1988-12-05"),
+  doc_type: "DNI",
+  doc_number: "55667788",
+  email: "jorge.rojas@mail.com",
+  phone_number: "977666555",
+  state: true,
+  created_at: new Date()
 }
+
 ])
 
 
@@ -248,6 +282,7 @@ db.hotels.insertMany([
 // =====================================================
 db.bookings.insertMany([
 {
+  // CABECERA
   customer: {
     name: "Carlos Pérez",
     email: "carlos.perez@mail.com"
@@ -255,6 +290,8 @@ db.bookings.insertMany([
   booking_date: new Date("2023-11-02"),
   total_pay: 300,
   state: true,
+
+  // DETALLE
   details: [
     {
       activity_name: "Canotaje",
@@ -277,6 +314,53 @@ db.bookings.insertMany([
       payment_method: "Efectivo",
       currency: "PEN",
       pay_date: new Date()
+    }
+  ]
+},
+{
+  // CABECERA
+  customer: {
+    name: "María Lopez",
+    email: "maria.lopez@mail.com"
+  },
+  booking_date: new Date("2023-11-03"),
+  total_pay: 280,
+  state: true,
+
+  // DETALLE
+  details: [
+    {
+      activity_name: "SipLine",
+      personnel_quantity: 2,
+      sub_total: 280,
+      discount: 0,
+      state_detail: "P",
+      equipment: [
+        {
+          name: "Casco",
+          quantity: 2,
+          returned: false
+        },
+        {
+          name: "Chaleco salvavidas",
+          quantity: 2,
+          returned: false
+        }
+      ]
+    }
+  ],
+  payments: [
+    {
+      amount: 140,
+      payment_method: "Yape",
+      currency: "PEN",
+      pay_date: new Date("2023-11-03T10:30:00")
+    },
+    {
+      amount: 140,
+      payment_method: "Efectivo",
+      currency: "PEN",
+      pay_date: new Date("2023-11-03T11:00:00")
     }
   ]
 }

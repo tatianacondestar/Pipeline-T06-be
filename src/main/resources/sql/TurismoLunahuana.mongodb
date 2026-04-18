@@ -365,3 +365,4 @@ db.bookings.insertMany([
   ]
 }
 ])
+

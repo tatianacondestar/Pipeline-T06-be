@@ -6,4 +6,4 @@ spring:
     name: TurismoLunahuana
   data:
     mongodb:
-      uri: mongodb+srv://tatianaconde_db_user:UFK9elYQNEIkEtqo@cluster0.t9araxv.mongodb.net/TurismoLunahuana?retryWrites=true&w=majority
+      uri: mongodb+srv://fabrizionegronquispe_db_user:gxpfVkS6TNSI14zh@cluster0.dlsx6dm.mongodb.net/TurismoLunahuana?retryWrites=true&w=majority

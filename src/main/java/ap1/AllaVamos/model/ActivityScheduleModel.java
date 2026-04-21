@@ -26,11 +26,12 @@ public class ActivityScheduleModel {
 
     private Boolean state;
 
-    // 🔶 DETALLE (MAP STRUCTURADO)
+    // 🔶 DETALLE
     private Map<String, Object> details;
 
     // 🔥 AUDITORÍA COMPLETA
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
+    private LocalDateTime restoredAt; // ✅ NUEVO
 }

@@ -34,13 +34,15 @@ public class ActivityScheduleServiceImpl implements ActivityScheduleService {
     }
 
     // =========================
-    // ➕ CREAR (CON DETALLE)
+    // ➕ CREAR
     // =========================
     @Override
     public Mono<ActivityScheduleModel> create(ActivityScheduleModel schedule) {
 
         schedule.setCreatedAt(LocalDateTime.now());
         schedule.setState(true);
+        schedule.setDeletedAt(null);
+        schedule.setRestoredAt(null);
 
         return activityRepository.findById(schedule.getActivityId())
                 .switchIfEmpty(Mono.error(new RuntimeException("Actividad no encontrada")))
@@ -61,7 +63,7 @@ public class ActivityScheduleServiceImpl implements ActivityScheduleService {
     }
 
     // =========================
-    // ✏️ EDITAR (PUT)
+    // ✏️ EDITAR
     // =========================
     @Override
     public Mono<ActivityScheduleModel> update(String id, ActivityScheduleModel schedule) {
@@ -86,7 +88,6 @@ public class ActivityScheduleServiceImpl implements ActivityScheduleService {
                                     existing.setStartDateTime(schedule.getStartDateTime());
                                     existing.setEndDateTime(schedule.getEndDateTime());
                                     existing.setDetails(details);
-
                                     existing.setUpdatedAt(LocalDateTime.now());
 
                                     return repository.save(existing);
@@ -117,7 +118,7 @@ public class ActivityScheduleServiceImpl implements ActivityScheduleService {
                 .switchIfEmpty(Mono.error(new RuntimeException("Horario no encontrado")))
                 .flatMap(existing -> {
                     existing.setState(true);
-                    existing.setDeletedAt(null);
+                    existing.setRestoredAt(LocalDateTime.now());
                     return repository.save(existing);
                 }).then();
     }

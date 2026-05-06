@@ -21,14 +21,18 @@ public class ActivityRest {
 
     private final ActivityService service;
 
-    // 🔥 LISTAR TODOS (ACTIVOS + INACTIVOS)
+    // =========================
+    // 🔍 LISTAR TODOS
+    // =========================
     @Operation(summary = "Listar todas las actividades (activas e inactivas)")
     @GetMapping
     public Flux<ActivityModel> getAll() {
         return service.findAll();
     }
 
+    // =========================
     // 🔍 BUSCAR POR ID
+    // =========================
     @Operation(summary = "Buscar actividad por ID")
     @GetMapping("/{id}")
     public Mono<ActivityModel> getById(
@@ -37,7 +41,9 @@ public class ActivityRest {
         return service.findById(id);
     }
 
+    // =========================
     // 🔍 FILTRAR POR ESTADO
+    // =========================
     @Operation(summary = "Filtrar actividades por estado (true=activo, false=inactivo)")
     @GetMapping("/state/{state}")
     public Flux<ActivityModel> getByState(
@@ -46,14 +52,18 @@ public class ActivityRest {
         return service.findByState(state);
     }
 
-    // ✅ CREAR
+    // =========================
+    // ➕ CREAR
+    // =========================
     @Operation(summary = "Crear actividad (registra createdAt)")
     @PostMapping
     public Mono<ActivityModel> create(@RequestBody ActivityModel activity) {
         return service.save(activity);
     }
 
-    // 🔄 ACTUALIZAR
+    // =========================
+    // ✏️ ACTUALIZAR
+    // =========================
     @Operation(summary = "Actualizar actividad (registra updatedAt)")
     @PutMapping("/{id}")
     public Mono<ActivityModel> update(
@@ -61,11 +71,12 @@ public class ActivityRest {
             @PathVariable String id,
             @RequestBody ActivityModel activity) {
 
-        activity.setId(id);
         return service.update(id, activity);
     }
 
+    // =========================
     // ❌ ELIMINADO LÓGICO
+    // =========================
     @Operation(summary = "Eliminar lógico (state=false y guarda deletedAt)")
     @PatchMapping("/delete/{id}")
     public Mono<ActivityModel> delete(
@@ -74,8 +85,10 @@ public class ActivityRest {
         return service.deleteLogical(id);
     }
 
+    // =========================
     // ♻️ RESTAURAR
-    @Operation(summary = "Restaurar actividad (state=true y registra updatedAt)")
+    // =========================
+    @Operation(summary = "Restaurar actividad (state=true y registra restoredAt)")
     @PatchMapping("/restore/{id}")
     public Mono<ActivityModel> restore(
             @Parameter(description = "ID de la actividad")

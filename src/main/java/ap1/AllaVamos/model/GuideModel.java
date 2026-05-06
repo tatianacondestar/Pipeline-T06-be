@@ -4,32 +4,25 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Map;
 
-@Document(collection = "activity_schedules")
+@Document(collection = "guides")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ActivityScheduleModel {
+public class GuideModel {
 
     @Id
     private String id;
 
-    // 🔷 CABECERA (relaciones)
-    private String activityId;
-    private String guideId;
+    private String name;
+    private String email;
+    private String phone;
 
-    // 🔥 FECHA Y HORA
-    private LocalDate date;
-    private LocalTime startTime;
-    private LocalTime endTime;
-
-    // 🔶 DETALLE (AQUÍ VA TODO)
-    private Map<String, Object> details;
+    // 🔥 ESTADO (soft delete)
+    @Builder.Default
+    private Boolean state = true;
 
     // 🔥 AUDITORÍA
     private LocalDateTime createdAt;

@@ -9,8 +9,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
@@ -18,16 +16,12 @@ public class ActivityServiceImpl implements ActivityService {
 
     private final ActivityRepository repository;
 
-    // 🔥 FECHA AUTOMÁTICA PERÚ
-    private Date now() {
-        return Date.from(
-                LocalDateTime.now()
-                        .atZone(ZoneId.of("America/Lima"))
-                        .toInstant()
-        );
+    // 🔥 FECHA AUTOMÁTICA
+    private LocalDateTime now() {
+        return LocalDateTime.now();
     }
 
-    // ✅ LISTAR TODOS (ACTIVOS + INACTIVOS)
+    // ✅ LISTAR TODOS
     @Override
     public Flux<ActivityModel> findAll() {
         return repository.findAll();
@@ -55,7 +49,7 @@ public class ActivityServiceImpl implements ActivityService {
             activity.setState(true);
         }
 
-        Date now = now();
+        LocalDateTime now = now();
 
         activity.setCreatedAt(now);
         activity.setUpdatedAt(null);
@@ -65,7 +59,7 @@ public class ActivityServiceImpl implements ActivityService {
         return repository.save(activity);
     }
 
-    // ✅ ACTUALIZAR (SOLO AQUÍ se usa updatedAt)
+    // ✅ ACTUALIZAR
     @Override
     public Mono<ActivityModel> update(String id, ActivityModel activity) {
         return repository.findById(id)
@@ -90,7 +84,7 @@ public class ActivityServiceImpl implements ActivityService {
                 });
     }
 
-    // ✅ ELIMINADO LÓGICO (NO TOCA updatedAt)
+    // ✅ ELIMINADO LÓGICO
     @Override
     public Mono<ActivityModel> deleteLogical(String id) {
         return repository.findById(id)
@@ -106,7 +100,7 @@ public class ActivityServiceImpl implements ActivityService {
                 });
     }
 
-    // ✅ RESTAURAR (NO TOCA updatedAt)
+    // ✅ RESTAURAR
     @Override
     public Mono<ActivityModel> restoreLogical(String id) {
         return repository.findById(id)
@@ -114,11 +108,7 @@ public class ActivityServiceImpl implements ActivityService {
 
                     activity.setState(true);
 
-                    // 🔥 NO borrar deletedAt
-                    // 🔥 SOLO registrar restauración
                     activity.setRestoredAt(now());
-
-                    // ❌ NO actualizar updatedAt aquí
 
                     return repository.save(activity);
                 });
